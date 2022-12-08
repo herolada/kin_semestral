@@ -34,34 +34,34 @@ $(wildcard ../makefile.init) \
 $(wildcard ../makefile.targets) \
 
 
-BUILD_ARTIFACT_NAME := kin_sem_stm
+BUILD_ARTIFACT_NAME := stm
 BUILD_ARTIFACT_EXTENSION := elf
 BUILD_ARTIFACT_PREFIX :=
 BUILD_ARTIFACT := $(BUILD_ARTIFACT_PREFIX)$(BUILD_ARTIFACT_NAME)$(if $(BUILD_ARTIFACT_EXTENSION),.$(BUILD_ARTIFACT_EXTENSION),)
 
 # Add inputs and outputs from these tool invocations to the build variables 
 EXECUTABLES += \
-kin_sem_stm.elf \
+stm.elf \
 
 MAP_FILES += \
-kin_sem_stm.map \
+stm.map \
 
 SIZE_OUTPUT += \
 default.size.stdout \
 
 OBJDUMP_LIST += \
-kin_sem_stm.list \
+stm.list \
 
 
 # All Target
 all: main-build
 
 # Main-build Target
-main-build: kin_sem_stm.elf secondary-outputs
+main-build: stm.elf secondary-outputs
 
 # Tool invocations
-kin_sem_stm.elf kin_sem_stm.map: $(OBJS) $(USER_OBJS) /home/stancd/Workspaces/cubeide/kin_sem_stm/STM32F413VGTX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "kin_sem_stm.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"/home/stancd/Workspaces/cubeide/kin_sem_stm/STM32F413VGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="kin_sem_stm.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+stm.elf stm.map: $(OBJS) $(USER_OBJS) /home/stancd/Documents/CVUT/sem1/kin/sem/kin_semestral/stm/STM32F413VGTX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "stm.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"/home/stancd/Documents/CVUT/sem1/kin/sem/kin_semestral/stm/STM32F413VGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="stm.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
@@ -70,14 +70,14 @@ default.size.stdout: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
 	@echo 'Finished building: $@'
 	@echo ' '
 
-kin_sem_stm.list: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-objdump -h -S $(EXECUTABLES) > "kin_sem_stm.list"
+stm.list: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-objdump -h -S $(EXECUTABLES) > "stm.list"
 	@echo 'Finished building: $@'
 	@echo ' '
 
 # Other Targets
 clean:
-	-$(RM) default.size.stdout kin_sem_stm.elf kin_sem_stm.list kin_sem_stm.map
+	-$(RM) default.size.stdout stm.elf stm.list stm.map
 	-@echo ' '
 
 secondary-outputs: $(SIZE_OUTPUT) $(OBJDUMP_LIST)
