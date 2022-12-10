@@ -104,6 +104,7 @@ int main(void)
   /* USER CODE BEGIN Init */
 
   spp_packet_t packet;
+  spp_init_packet(&packet);
   uint8_t data[SPP_PACKET_LEN];
   uint16_t rx_len;
 
@@ -153,13 +154,15 @@ int main(void)
 			  switch (packet.header.id.apid) {
 
 			  	  case (SPP_APID_GS | SPP_APID_PING):
-				  	  spp_set_header(&packet, SPP_VERSION_NUMBER, SPP_TYPE_TEL, SPP_SEC_HDR_F_0, SPP_APID_CS | SPP_APID_PONG, SPP_SEQ_CTRL_F_US, 0);
+				  	  spp_set_header(&packet, SPP_VERSION_NUMBER, SPP_TYPE_MET, SPP_SEC_HDR_F_0, SPP_APID_CS | SPP_APID_PONG, SPP_SEQ_CTRL_F_US, 0);
 				  	  spp_set_data(&packet, packet.header.data_len, pong);
+				  	  HAL_UART_Transmit(&huart6, data, packet.header.data_len+SPP_HEADER_LEN, HAL_MAX_DELAY);
 				  	  break;
 
 			  	  case (SPP_APID_GS | SPP_APID_PONG):
-				  	  spp_set_header(&packet, SPP_VERSION_NUMBER, SPP_TYPE_TEL, SPP_SEC_HDR_F_0, SPP_APID_CS | SPP_APID_PING, SPP_SEQ_CTRL_F_US, 0);
+				  	  spp_set_header(&packet, SPP_VERSION_NUMBER, SPP_TYPE_MET, SPP_SEC_HDR_F_0, SPP_APID_CS | SPP_APID_PING, SPP_SEQ_CTRL_F_US, 0);
 				  	  spp_set_data(&packet, packet.header.data_len, ping);
+				  	  HAL_UART_Transmit(&huart6, data, packet.header.data_len+SPP_HEADER_LEN, HAL_MAX_DELAY);
 				  	  break;
 			  }
 

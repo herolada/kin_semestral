@@ -33,7 +33,7 @@
 
 #define SPP_VERSION_NUMBER 0x0
 
-#define SPP_TYPE_MET 0x0 // Telemetry
+#define SPP_TYPE_TEL 0x0 // Telemetry
 #define SPP_TYPE_CMD 0x1 // Telecommand
 
 #define SPP_SEC_HDR_F_0 0x0 // Secondary header absent
@@ -41,8 +41,8 @@
 
 #define SPP_APID_GS     0x0 // Ground Station ID
 #define SPP_APID_CS     0x1 // CubeSat ID
-#define SPP_APID_PING   0x0 // Ping packet
-#define SPP_APID_PONG   0x2 // Pong packet
+#define SPP_APID_PING   0x2 // Ping packet
+#define SPP_APID_PONG   0x4 // Pong packet 
 
 #define SPP_SEQ_CTRL_F_CS 0x0 // Continuous segment
 #define SPP_SEQ_CTRL_F_FS 0x1 // First segment
@@ -86,8 +86,6 @@ typedef struct spp_packet_s {
 } spp_packet_t;
 
 /* SPP Functions */
-
-void spp_init_packet(spp_packet_t *packet);
 
 void spp_set_header(spp_packet_t *packet, uint8_t version_number, uint8_t type, uint8_t sec_hdr_f, uint16_t apid, uint8_t seq_f, uint16_t seq_count); 
 

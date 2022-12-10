@@ -11,12 +11,6 @@
 
 #include "kin_spp.h"
 
-void spp_init_packet(spp_packet_t *packet) {
-
-	spp_set_header(packet, 0, 0, 0, 0, 0, 0);
-
-}
-
 void spp_set_header(spp_packet_t *packet, uint8_t version_number, uint8_t type, uint8_t sec_hdr_f, uint16_t apid, uint8_t seq_f, uint16_t seq_count) {
 
     packet->header.version_number = version_number;
