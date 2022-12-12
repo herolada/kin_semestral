@@ -1,0 +1,11 @@
+FILE_TYPE = MULTI_PHYS_TABLE;
+
+PART 'MCP1811AT_018_TT'
+CLASS = DISCRETE
+{========================================================================================}
+:"MANUFACTURER_NAME", "MANUFACTURER_PART_NUMBER"= "PART_NUMBER", "JEDEC_TYPE", "PACK_TYPE", "MOUSER_PART_NUMBER", "MOUSER_PRICE/STOCK", "DESCRIPTION", "DATASHEET", "HEIGHT";
+{========================================================================================}
+ "Microchip", "MCP1811AT-018/TT" (!) = "", "SOT95P237X112-3N", "SOT23 (3-Pin)", "579-MCP1811AT-018/TT", "https://www.mouser.co.uk/ProductDetail/Microchip-Technology/MCP1811AT-018-TT?qs=byeeYqUIh0NDzAU3hglf3g%3D%3D", "MICROCHIP - MCP1811AT-018/TT - Fixed LDO Voltage Regulator, 2V to 5.5V, 400mV drop, 1.8V/150mA out, SOT-23-3", "", "1.12 mm"
+END_PART
+
+END.

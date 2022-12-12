@@ -105,11 +105,12 @@ int main(void)
 
   spp_packet_t packet;
   spp_init_packet(&packet);
-  uint8_t data[SPP_PACKET_LEN];
-  uint16_t rx_len;
 
-  uint8_t ping[4] = "ping";
-  uint8_t pong[4] = "pong";
+  uint8_t rx_buf[SPP_PACKET_LEN];
+  uint8_t tx_buf[SPP_PACKET_LEN];
+
+  uint8_t ping[SPP_DATA_LEN] = "ping";
+  uint8_t pong[SPP_DATA_LEN] = "pong";
 
   /* USER CODE END Init */
 
@@ -145,27 +146,25 @@ int main(void)
   {
     /* USER CODE END WHILE */
 
-	  if ((HAL_UARTEx_ReceiveToIdle(&huart6, data, SPP_PACKET_LEN_MAX, &rx_len, HAL_MAX_DELAY)) == HAL_OK) {
+	  if ((HAL_UART_Receive(&huart6, rx_buf, SPP_PACKET_LEN, HAL_MAX_DELAY)) == HAL_OK) {
 
-		  if (rx_len >= 6) {
+		  spp_buffer_to_packet(&packet, rx_buf);
 
-			  spp_buffer_to_packet(&packet, data);
+		  switch (packet.header.id.apid) {
 
-			  switch (packet.header.id.apid) {
+			  case (SPP_APID_GS | SPP_APID_PING):
+				  spp_set_header(&packet, SPP_VERSION_NUMBER, SPP_TYPE_MET, SPP_SEC_HDR_F_0, SPP_APID_CS | SPP_APID_PONG, SPP_SEQ_CTRL_F_US, 0);
+				  spp_set_data(&packet, SPP_DATA_LEN, pong);
+				  spp_packet_to_buffer(&packet, tx_buf);
+				  HAL_UART_Transmit(&huart6, tx_buf, packet.header.data_len+SPP_HEADER_LEN, HAL_MAX_DELAY);
+				  break;
 
-			  	  case (SPP_APID_GS | SPP_APID_PING):
-				  	  spp_set_header(&packet, SPP_VERSION_NUMBER, SPP_TYPE_MET, SPP_SEC_HDR_F_0, SPP_APID_CS | SPP_APID_PONG, SPP_SEQ_CTRL_F_US, 0);
-				  	  spp_set_data(&packet, packet.header.data_len, pong);
-				  	  HAL_UART_Transmit(&huart6, data, packet.header.data_len+SPP_HEADER_LEN, HAL_MAX_DELAY);
-				  	  break;
-
-			  	  case (SPP_APID_GS | SPP_APID_PONG):
-				  	  spp_set_header(&packet, SPP_VERSION_NUMBER, SPP_TYPE_MET, SPP_SEC_HDR_F_0, SPP_APID_CS | SPP_APID_PING, SPP_SEQ_CTRL_F_US, 0);
-				  	  spp_set_data(&packet, packet.header.data_len, ping);
-				  	  HAL_UART_Transmit(&huart6, data, packet.header.data_len+SPP_HEADER_LEN, HAL_MAX_DELAY);
-				  	  break;
-			  }
-
+			  case (SPP_APID_GS | SPP_APID_PONG):
+				  spp_set_header(&packet, SPP_VERSION_NUMBER, SPP_TYPE_MET, SPP_SEC_HDR_F_0, SPP_APID_CS | SPP_APID_PING, SPP_SEQ_CTRL_F_US, 0);
+				  spp_set_data(&packet, SPP_DATA_LEN, ping);
+				  spp_packet_to_buffer(&packet, tx_buf);
+				  HAL_UART_Transmit(&huart6, tx_buf, packet.header.data_len+SPP_HEADER_LEN, HAL_MAX_DELAY);
+				  break;
 		  }
 
 	  }

@@ -100,8 +100,8 @@ extern "C" {
 #define TX_PIN_NUMBER  TX1_PIN_NUMBER
 #define RX_PIN_NUMBER  RX1_PIN_NUMBER
 #endif
-#define CTS_PIN_NUMBER 7
-#define RTS_PIN_NUMBER 5
+#define CTS_PIN_NUMBER 0xFFFFFFFF
+#define RTS_PIN_NUMBER 0xFFFFFFFF
 #define HWFC           false
 
 #define SPIS_MISO_PIN   28  // SPI MISO signal.
