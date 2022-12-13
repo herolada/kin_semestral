@@ -86,7 +86,7 @@ async def uart_terminal():
             # single BLE packet. We can use the max_write_without_response_size
             # property to split the data into chunks that will fit.
 
-            for s in sliced(data, rx_char.max_write_without_response_size):
+            for s in sliced(data[:-1], rx_char.max_write_without_response_size):
                 await client.write_gatt_char(rx_char, s)
 
             print("sent:", data)

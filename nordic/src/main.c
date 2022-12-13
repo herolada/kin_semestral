@@ -207,22 +207,24 @@ static void nus_data_handler(ble_nus_evt_t * p_evt)
         NRF_LOG_DEBUG("Received data from BLE NUS. Writing data on UART.");
         NRF_LOG_HEXDUMP_DEBUG(p_evt->params.rx_data.p_data, p_evt->params.rx_data.length);
 
-        for (uint32_t i = 0; i < p_evt->params.rx_data.length; i++)
-        {
-            do
-            {
-                err_code = app_uart_put(p_evt->params.rx_data.p_data[i]);
-                if ((err_code != NRF_SUCCESS) && (err_code != NRF_ERROR_BUSY))
-                {
-                    NRF_LOG_ERROR("Failed receiving NUS message. Error 0x%x. ", err_code);
-                    APP_ERROR_CHECK(err_code);
-                }
-            } while (err_code == NRF_ERROR_BUSY);
-        }
-        if (p_evt->params.rx_data.p_data[p_evt->params.rx_data.length - 1] == '\r')
-        {
-            while (app_uart_put('\n') == NRF_ERROR_BUSY);
-        }
+        ble_nus_data_send(&m_nus, p_evt->params.rx_data.p_data, &(p_evt->params.rx_data.length), m_conn_handle);
+
+        //for (uint32_t i = 0; i < p_evt->params.rx_data.length; i++)
+        //{
+        //    do
+        //    {
+        //        err_code = app_uart_put(p_evt->params.rx_data.p_data[i]);
+        //        if ((err_code != NRF_SUCCESS) && (err_code != NRF_ERROR_BUSY))
+        //        {
+        //            NRF_LOG_ERROR("Failed receiving NUS message. Error 0x%x. ", err_code);
+        //            APP_ERROR_CHECK(err_code);
+        //        }
+        //    } while (err_code == NRF_ERROR_BUSY);
+        //}
+        //if (p_evt->params.rx_data.p_data[p_evt->params.rx_data.length - 1] == '\r')
+        //{
+        //    while (app_uart_put('\n') == NRF_ERROR_BUSY);
+        //}
     }
 
 }
@@ -717,7 +719,7 @@ int main(void)
     bool erase_bonds;
 
     // Initialize.
-    uart_init();
+    // uart_init();
     log_init();
     timers_init();
 #if LEDS_NUMBER > 0
@@ -732,7 +734,7 @@ int main(void)
     conn_params_init();
 
     // Start execution.
-    printf("\r\nUART started.\r\n");
+    // printf("\r\nUART started.\r\n");
     NRF_LOG_INFO("Debug logging for UART over RTT started.");
     advertising_start();
 
