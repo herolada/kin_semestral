@@ -534,8 +534,6 @@ void uart_event_handle(app_uart_evt_t * p_event)
     static uint8_t index = 0;
     uint32_t       err_code;
 
-    NRF_LOG_DEBUG("event happend");
-
     switch (p_event->evt_type)
     {
         case APP_UART_DATA_READY:
@@ -742,23 +740,7 @@ int main(void)
     for (;;)
     {
         idle_state_handle();
-
-        uint8_t cr = 'a';
-        while (app_uart_put(cr) != NRF_SUCCESS);
-        //while (app_uart_get(&cr) != NRF_SUCCESS);
-        NRF_LOG_INFO("Something Happend")
         
-        for (uint32_t i = 100000000; i > 0; i--)
-
-        if (cr == 'q' || cr == 'Q')
-        {
-            printf(" \r\nExit!\r\n");
-
-            while (true)
-            {
-                // Do nothing.
-            }
-        }
     }
 }
 

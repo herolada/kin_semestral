@@ -65,10 +65,10 @@
       <file file_name="$(NORDIC_SDK)/components/libraries/memobj/nrf_memobj.c" />
       <file file_name="$(NORDIC_SDK)/components/libraries/pwr_mgmt/nrf_pwr_mgmt.c" />
       <file file_name="$(NORDIC_SDK)/components/libraries/ringbuf/nrf_ringbuf.c" />
+      <file file_name="$(NORDIC_SDK)/components/libraries/experimental_section_vars/nrf_section_iter.c" />
       <file file_name="$(NORDIC_SDK)/components/libraries/sortlist/nrf_sortlist.c" />
       <file file_name="$(NORDIC_SDK)/components/libraries/strerror/nrf_strerror.c" />
       <file file_name="$(NORDIC_SDK)/components/libraries/uart/retarget.c" />
-      <file file_name="$(NORDIC_SDK)/components/libraries/experimental_section_vars/nrf_section_iter.c" />
     </folder>
     <folder Name="None">
       <file file_name="$(NORDIC_SDK)/modules/nrfx/mdk/ses_startup_nrf52.s" />
@@ -83,26 +83,22 @@
     <folder Name="nRF_Drivers">
       <file file_name="$(NORDIC_SDK)/integration/nrfx/legacy/nrf_drv_clock.c" />
       <file file_name="$(NORDIC_SDK)/integration/nrfx/legacy/nrf_drv_uart.c" />
+      <file file_name="$(NORDIC_SDK)/modules/nrfx/soc/nrfx_atomic.c" />
       <file file_name="$(NORDIC_SDK)/modules/nrfx/drivers/src/nrfx_clock.c" />
       <file file_name="$(NORDIC_SDK)/modules/nrfx/drivers/src/nrfx_gpiote.c" />
       <file file_name="$(NORDIC_SDK)/modules/nrfx/drivers/src/prs/nrfx_prs.c" />
       <file file_name="$(NORDIC_SDK)/modules/nrfx/drivers/src/nrfx_uart.c" />
       <file file_name="$(NORDIC_SDK)/modules/nrfx/drivers/src/nrfx_uarte.c" />
-      <file file_name="$(NORDIC_SDK)/modules/nrfx/soc/nrfx_atomic.c" />
     </folder>
     <folder Name="Board Support">
       <file file_name="$(NORDIC_SDK)/components/libraries/bsp/bsp.c" />
       <file file_name="$(NORDIC_SDK)/components/libraries/bsp/bsp_btn_ble.c" />
     </folder>
     <folder Name="Application">
+      <file file_name="src/main.c" />
+      <file file_name="config/sdk_config.h" />
       <file file_name="src/kin_spp.c" />
       <file file_name="src/kin_spp.h" />
-      <file file_name="config/sdk_config.h" />
-      <file file_name="src/main.c">
-        <configuration
-          Name="Release"
-          c_user_include_directories="$(NORDIC_SDK)/components/libraries/sensorsim" />
-      </file>
     </folder>
     <folder Name="nRF_Segger_RTT">
       <file file_name="$(NORDIC_SDK)/external/segger_rtt/SEGGER_RTT.c" />

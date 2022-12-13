@@ -13,8 +13,8 @@
 
 /* SPP Buffer Lengths*/
 
-#define SPP_DATA_LEN_MAX    65535
-#define SPP_DATA_LEN        4
+#define SPP_DATA_LEN_MAX    (65535 - 6) // - 6 to make it a max 16 bit number for STM HAL libraries
+#define SPP_DATA_LEN        SPP_DATA_LEN_MAX
 #define SPP_HEADER_LEN      6
 #define SPP_PACKET_LEN_MAX  (SPP_HEADER_LEN + SPP_DATA_LEN_MAX)
 #define SPP_PACKET_LEN      (SPP_HEADER_LEN + SPP_DATA_LEN)
