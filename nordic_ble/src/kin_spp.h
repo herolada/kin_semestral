@@ -36,8 +36,8 @@
 #define SPP_TYPE_TM 0x0 // Telemetry
 #define SPP_TYPE_TC 0x1 // Telecommand
 
-#define SPP_SEC_HDR_F_0 0x0 // Secondary header absent
-#define SPP_SEC_HDR_F_1 0x1 // Secondary header present
+#define SPP_SEC_HDR_F_F 0x0 // Secondary header absent
+#define SPP_SEC_HDR_F_T 0x1 // Secondary header present
 
 #define SPP_APID_GS     0x0 // Ground Station ID
 #define SPP_APID_CS     0x1 // CubeSat ID

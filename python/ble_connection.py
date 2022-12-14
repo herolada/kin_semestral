@@ -15,6 +15,8 @@ from bleak.backends.characteristic import BleakGATTCharacteristic
 from bleak.backends.device import BLEDevice
 from bleak.backends.scanner import AdvertisementData
 
+from kin_spp import *
+
 UART_SERVICE_UUID = "6E400001-B5A3-F393-E0A9-E50E24DCCA9E"
 UART_RX_CHAR_UUID = "6E400002-B5A3-F393-E0A9-E50E24DCCA9E"
 UART_TX_CHAR_UUID = "6E400003-B5A3-F393-E0A9-E50E24DCCA9E"
@@ -68,6 +70,8 @@ async def uart_terminal():
         nus = client.services.get_service(UART_SERVICE_UUID)
         rx_char = nus.get_characteristic(UART_RX_CHAR_UUID)
 
+
+
         while True:
             # This waits until you type a line and press ENTER.
             # A real terminal program might put stdin in raw mode so that things
@@ -86,10 +90,28 @@ async def uart_terminal():
             # single BLE packet. We can use the max_write_without_response_size
             # property to split the data into chunks that will fit.
 
-            for s in sliced(data[:-1], rx_char.max_write_without_response_size):
-                await client.write_gatt_char(rx_char, s)
+            packet = SpacePacketProtocol()
 
-            print("sent:", data)
+            if data[:-1] == b'ping':
+                    
+                packet.setHeader(VersionNumber.DEFAULT, PacketType.TC, SecondaryHeaderFlag.F, ApplicationProcessIdentifier.GS | ApplicationProcessIdentifier.PING, SequenceFlag.US, 0)
+                packet.setData(data[:-1])
+                buff = packet.toBuffer()
+                for s in sliced(buff, rx_char.max_write_without_response_size):
+                    await client.write_gatt_char(rx_char, s)
+                print("sent:", buff)
+
+
+            elif data[:-1] == b'pong':
+                
+                packet.setHeader(VersionNumber.DEFAULT, PacketType.TC, SecondaryHeaderFlag.F, ApplicationProcessIdentifier.GS | ApplicationProcessIdentifier.PONG, SequenceFlag.US, 0)
+                packet.setData(data[:-1])
+                buff = packet.toBuffer()
+                for s in sliced(buff, rx_char.max_write_without_response_size):
+                    await client.write_gatt_char(rx_char, s)
+                print("sent:", buff)
+
+
 
 
 if __name__ == "__main__":

@@ -11,6 +11,12 @@
 
 #include "kin_spp.h"
 
+void spp_init_packet(spp_packet_t *packet) {
+
+	spp_set_header(packet, 0, 0, 0, 0, 0, 0);
+
+}
+
 void spp_set_header(spp_packet_t *packet, uint8_t version_number, uint8_t type, uint8_t sec_hdr_f, uint16_t apid, uint8_t seq_f, uint16_t seq_count) {
 
     packet->header.version_number = version_number;
@@ -73,12 +79,7 @@ void spp_buffer_to_packet(spp_packet_t *packet, uint8_t *buf) {
     packet->header.seq_ctrl.seq_count = SPP_EXTRACT_BITS(packet_seq_ctrl, 14, 13);
 
     packet->header.data_len = packet_data_len;
-
-    for (uint16_t i = 0; i < packet_data_len; i++) {
-
-        packet->data[i] = buf[i+6];
-
-    }
+    packet->data = &buf[6];
 
 }
 
