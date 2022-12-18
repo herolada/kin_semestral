@@ -11,6 +11,7 @@ import sys
 from itertools import count, takewhile
 from typing import Iterator
 from queue import Queue
+from kin_spp import *
 
 from bleak import BleakClient, BleakScanner
 from bleak.backends.characteristic import BleakGATTCharacteristic
@@ -60,13 +61,30 @@ class BleConnection():
     
     async def send_message(self):
         message = self.q_send.get()
+
         if isinstance(message, str):
             message = bytes(message, 'utf-8')
-        for s in self._sliced(message[:-1], self.rx_char.max_write_without_response_size):
+
+        packet = SpacePacketProtocol()
+
+        if message == b'ping':
+            packet.setHeader(VersionNumber.DEFAULT, PacketType.TC, SecondaryHeaderFlag.F, ApplicationProcessIdentifier.GS | ApplicationProcessIdentifier.PING, SequenceFlag.US, 0)
+        elif message == b'pong':
+            packet.setHeader(VersionNumber.DEFAULT, PacketType.TC, SecondaryHeaderFlag.F, ApplicationProcessIdentifier.GS | ApplicationProcessIdentifier.PONG, SequenceFlag.US, 0)
+        else:
+            # TODO
+            packet.setHeader(VersionNumber.DEFAULT, PacketType.TC, SecondaryHeaderFlag.F, ApplicationProcessIdentifier.GS | ApplicationProcessIdentifier.PONG, SequenceFlag.US, 0)
+
+        packet.setData(message)
+        data = packet.toBuffer()
+
+        #if isinstance(message, str):
+        #    message = bytes(message, 'utf-8')
+        for s in self._sliced(data[:-1], self.rx_char.max_write_without_response_size):
             await self.client.write_gatt_char(self.rx_char, s)
 
         #await asyncio.sleep(1000)
-        print("Message \'{}\' sent.".format(message))
+        print("Message \'{}\' sent.".format(data))
 
     def _sliced(self, data: bytes, n: int) -> Iterator[bytes]:
         """
@@ -107,9 +125,10 @@ async def main():
     q_receive = Queue()
     ble_connection = BleConnection(q_send,q_receive)
     await ble_connection.connect()
-    q_send.put("ping1")
+    q_send.put("ping")
     await ble_connection.send_message()
-    #await ble_connection.send_message("ping2")
+    q_send.put("pong")
+    await ble_connection.send_message()
     #await ble_connection.send_message("ping3")
     #await ble_connection.send_message("ping4")
     await asyncio.sleep(1)

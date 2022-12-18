@@ -92,20 +92,20 @@ async def uart_terminal():
 
             packet = SpacePacketProtocol()
 
-            if data[:-1] == b'ping':
+            if data[0:4] == b'ping':
                     
                 packet.setHeader(VersionNumber.DEFAULT, PacketType.TC, SecondaryHeaderFlag.F, ApplicationProcessIdentifier.GS | ApplicationProcessIdentifier.PING, SequenceFlag.US, 0)
-                packet.setData(data[:-1])
+                packet.setData(data[0:4])
                 buff = packet.toBuffer()
                 for s in sliced(buff, rx_char.max_write_without_response_size):
                     await client.write_gatt_char(rx_char, s)
                 print("sent:", buff)
 
 
-            elif data[:-1] == b'pong':
+            elif data[0:4] == b'pong':
                 
                 packet.setHeader(VersionNumber.DEFAULT, PacketType.TC, SecondaryHeaderFlag.F, ApplicationProcessIdentifier.GS | ApplicationProcessIdentifier.PONG, SequenceFlag.US, 0)
-                packet.setData(data[:-1])
+                packet.setData(data[0:4])
                 buff = packet.toBuffer()
                 for s in sliced(buff, rx_char.max_write_without_response_size):
                     await client.write_gatt_char(rx_char, s)
