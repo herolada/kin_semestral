@@ -10,8 +10,9 @@ class BleGuiCommunication():
     def __init__(self):
         self.q_send = Queue()
         self.q_receive = Queue()
-        self.ble_connection = BleConnection(self.q_send,self.q_receive)
-        self.gui = BleGui(self.q_send,self.q_receive)
+        self.q_connection = Queue()
+        self.ble_connection = BleConnection(self.q_send,self.q_receive,self.q_connection)
+        self.gui = BleGui(self.q_send,self.q_receive,self.q_connection)
         
     async def main(self):  
         await self.ble_connection.connect()
@@ -39,6 +40,7 @@ class BleGuiCommunication():
             #ble_connection.received_msg = ""
 
         await asyncio.sleep(0.01)
+        
         
 if __name__ == "__main__":
     ble_gui_comm = BleGuiCommunication()

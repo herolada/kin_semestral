@@ -6,12 +6,11 @@ An example showing how to write a simple program using the Nordic Semiconductor
 """
 
 import asyncio
-import threading
-import sys
 from itertools import count, takewhile
 from typing import Iterator
 from queue import Queue
 from kin_spp import *
+import time
 
 from bleak import BleakClient, BleakScanner
 from bleak.backends.characteristic import BleakGATTCharacteristic
@@ -23,11 +22,12 @@ class BleConnection():
     _UART_RX_CHAR_UUID = "6E400002-B5A3-F393-E0A9-E50E24DCCA9E"
     _UART_TX_CHAR_UUID = "6E400003-B5A3-F393-E0A9-E50E24DCCA9E"
 
-    def __init__(self, q_send, q_receive):
+    def __init__(self, q_send, q_receive, q_connection):
         self.device = None
         self.new_received_msg_flag = False
         self.q_send = q_send
         self.q_receive = q_receive
+        self.q_connection = q_connection
         #threading.Thread.__init__(self)
         #self.start()
     
@@ -51,8 +51,14 @@ class BleConnection():
             try:
                 await self.client.connect()
                 print("Connected.")
+                while not self.q_connection.empty():
+                    self.q_connection.get()
+                self.q_connection.put(True)
             except:
                 print("Could not connect.")
+                while not self.q_connection.empty():
+                    self.q_connection.get()
+                self.q_connection.put(False)
                 return
 
             await self.client.start_notify(self._UART_TX_CHAR_UUID, self._handle_receive)
@@ -60,7 +66,7 @@ class BleConnection():
             self.rx_char = self.nus.get_characteristic(self._UART_RX_CHAR_UUID)
     
     async def send_message(self):
-        message = self.q_send.get()
+        message = self.q_send.get()[0:4]
 
         if isinstance(message, str):
             message = bytes(message, 'utf-8')
@@ -80,10 +86,9 @@ class BleConnection():
 
         #if isinstance(message, str):
         #    message = bytes(message, 'utf-8')
-        for s in self._sliced(data[:-1], self.rx_char.max_write_without_response_size):
+        for s in self._sliced(data, self.rx_char.max_write_without_response_size):
             await self.client.write_gatt_char(self.rx_char, s)
 
-        #await asyncio.sleep(1000)
         print("Message \'{}\' sent.".format(data))
 
     def _sliced(self, data: bytes, n: int) -> Iterator[bytes]:
@@ -95,13 +100,18 @@ class BleConnection():
 
     def _handle_disconnect(self, _: BleakClient):
         print("Device was disconnected, goodbye.")
+        while not self.q_connection.empty():
+            self.q_connection.get()
+        self.q_connection.put(False)
         # cancelling all tasks effectively ends the program
         for task in asyncio.all_tasks():
             task.cancel()
         
     def _handle_receive(self, _: BleakGATTCharacteristic, data: bytearray):
         print("received:", data)
-        self.q_receive.put(data)
+        print("data only:", data[6:].decode("utf-8") )
+        
+        self.q_receive.put(data[6:].decode("utf-8") )
         #self.received_msg = data
         #self.new_received_msg_flag = True
 
@@ -129,11 +139,23 @@ async def main():
     await ble_connection.send_message()
     q_send.put("pong")
     await ble_connection.send_message()
+    q_send.put("ping")
+    await ble_connection.send_message()
+    q_send.put("pong")
+    await ble_connection.send_message()
+    q_send.put("ping")
+    await ble_connection.send_message()
+    q_send.put("pong")
+    await ble_connection.send_message()
+    q_send.put("ping")
+    await ble_connection.send_message()
+    q_send.put("pong")
+    await ble_connection.send_message()
     #await ble_connection.send_message("ping3")
     #await ble_connection.send_message("ping4")
-    await asyncio.sleep(1)
+    #await asyncio.sleep(1)
     while True:
-        pass
+        await asyncio.sleep(0.1)
 
-if __name__ == "__main__":
-    asyncio.run(main())
+#if __name__ == "__main__":
+    #asyncio.run(main())
